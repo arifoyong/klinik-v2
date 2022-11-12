@@ -11,7 +11,7 @@ const Layout = ({children}) => (
       </Head>
     <NavBar/>
 
-    <main className="w-full lg:w-5/6 mx-auto px-2">
+    <main className="w-full mx-auto px-4">
       {children}
     </main>
   </div>

@@ -1,13 +1,23 @@
 const moment = require('moment')
 
-const formatDate = (dateToFormat) => {
+const formatDD_MMM_YY = (dateToFormat) => {
   var date = moment(dateToFormat)
 
   if (!date.isValid()) {
     return ""
   } 
 
-  return date.utc().format('DD-MMM-YY')
+  return date.format('DD-MMM-YY')
+}
+
+const formatYYYY_MM_DD = (dateToFormat) => {
+  var date = moment(dateToFormat, "YYYY-MM-DD")
+
+  if (!date.isValid()) {
+    return ""
+  } 
+
+  return date.format('YYYY-MM-DD')
 }
 
 const formatNo = (number) => {
@@ -16,6 +26,7 @@ const formatNo = (number) => {
 }
 
 module.exports = {
-  formatDate,
+  formatYYYY_MM_DD,
+  formatDD_MMM_YY,
   formatNo
 }

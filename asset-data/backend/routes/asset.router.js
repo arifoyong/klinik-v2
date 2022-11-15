@@ -4,7 +4,8 @@ const asset = require('../controllers/asset.controller')
 
 router.get('/', asset.getAllAsset)
 router.get('/:id', asset.findAssetById)
-router.post('/', asset.createAsset)
+router.post('/', asset.createAsset2)
+// router.post('/asset', asset.createAsset2)
 router.put('/:id', asset.updateAsset)
 router.delete('/:id', asset.deleteAsset)
 

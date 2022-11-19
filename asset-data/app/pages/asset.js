@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
+
 import axios from 'axios'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -9,28 +11,21 @@ import {  PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
 import { formatDD_MMM_YY, formatNo }  from '../utils/formatDate'
 import { API } from '../config'
 
+
+const fetcher = async (url) => {
+  return await axios.get(url).then((resp) => resp.data.data)
+}
+
 export default function Home() {
-  const [data, setData] = useState({})
   const [selectedRow, setSelectedRow] = useState({})
   const [showModal, setShowModal] = useState(false)
-  useEffect(() => {
-    getData()
-  },[])
 
-  const getData = () => {
-    console.log("API: ", API)
-    const AXIOS_OPTION = {
-      method: 'GET',
-      url: `${API}/asset`,
-    };
-
-    axios.request(AXIOS_OPTION)
-    .then((resp) => setData(resp.data.data))
-  }
+  const { data, error } = useSWR(`${API}/asset`, fetcher)
+  if (error) return <div>Failed to load</div>
+  if (!data) return <div>Loading...</div>
   
   const closeModal = () => {
     setShowModal(false)
-    getData()
   }
 
   const handleEdit = (selectedData) => {
@@ -50,7 +45,6 @@ export default function Home() {
     };
 
     axios.request(AXIOS_OPTION)
-    getData()
   }
 
   return (

@@ -14,7 +14,7 @@ const DB_DATABASE = process.env.DB_DATABASE
 //   database : 'local_db'
 // }
 
-
+console.log(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE)
 const connOption = {
   host     : DB_HOST,
   port     : DB_PORT,

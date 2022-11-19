@@ -1,0 +1,41 @@
+version: "3.3"
+
+services:
+  mysqldb:
+    build:
+      context: ./db
+      dockerfile: Dockerfile-dev
+    # restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+    ports:
+      - '3306:3306'
+    volumes:
+      - mydb:/var/lib/mysql
+
+  backend:
+    container_name: klinik_backend
+    command: npm run dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysqldb
+    volumes:
+      - ./backend:/src
+      - /src/node_modules
+  
+  frontend:
+    container_name: klinik_frontend
+    command: npm run dev
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: dev
+    ports:
+      - "3000:3000"
+volumes: 
+  mydb:

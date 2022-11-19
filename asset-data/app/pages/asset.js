@@ -37,6 +37,11 @@ export default function Home() {
     setShowModal(true)
   }
 
+  const handleAdd = () => {
+    setSelectedRow()
+    setShowModal(true)
+  }
+
   const handleDelete = (id) => {
     const AXIOS_OPTION = {
       method: 'DELETE',
@@ -51,8 +56,8 @@ export default function Home() {
     <Layout>
       <div className="flex justify-end p-2 mt-2">
         <button className="py-2 px-4 bg-green-600 text-white rounded-xl"
-          onClick={() => setShowModal(!showModal)}>
-          Add
+          onClick={() => handleAdd()}>
+          (+)
         </button>
       </div>
 

@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import moment from 'moment'
+import Image from 'next/image'
 import { formatYYYY_MM_DD } from '../utils/formatDate'
 import { toast } from './Alert/Alert'
 import {  PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid'
@@ -20,15 +21,19 @@ const defaultData = {
   address:"",
   website:"",  
   contact:"",
-  phone:""
+  phone:"",
+  img_uri:""
 }
 
 const InputModal = ({closeModal, selectedRow}) => {
   const [selectedFile, setSelectedFile] = useState();
-  const [data, setData] = useState({})
+  const [data, setData] = useState(defaultData)
 
   useEffect(() => {
-    selectedRow ? setData(selectedRow) : setData(defaultData)
+    if (selectedRow) {
+      selectedRow.delivery_date = moment(selectedRow.delivery_date).format('yyyy-MM-DD')
+      setData(selectedRow)
+    } 
   },[])
 
   const handleChange = (e) => {
@@ -76,34 +81,35 @@ const InputModal = ({closeModal, selectedRow}) => {
   const updateAsset = async (e) => {
     e.preventDefault()
 
-    // const assetData = new FormData()
-    // assetData.append('name', data.name)
-    // assetData.append('brand', data.brand)
-    // assetData.append('spec', data.spec)
-    // assetData.append('quantity', data.quantity)
-    // assetData.append('price', data.price)
-    // assetData.append('delivery_cost', data.delivery_cost)
-    // assetData.append('delivery_date', data.delivery_date)
-    // assetData.append('vendor', data.vendor)
-    // assetData.append('address', data.address)
-    // assetData.append('website', data.website)
-    // assetData.append('contact', data.contact)
-    // assetData.append('phone', data.phone)
-    // // assetData.append('assetImg', selectedFile)
+    const assetData = new FormData()
+    assetData.append('id', data.id)
+    assetData.append('name', data.name)
+    assetData.append('brand', data.brand)
+    assetData.append('spec', data.spec)
+    assetData.append('quantity', data.quantity)
+    assetData.append('price', data.price)
+    assetData.append('delivery_cost', data.delivery_cost)
+    assetData.append('delivery_date', data.delivery_date)
+    assetData.append('vendor', data.vendor)
+    assetData.append('address', data.address)
+    assetData.append('website', data.website)
+    assetData.append('contact', data.contact)
+    assetData.append('phone', data.phone)
+    assetData.append('img_uri', data.img_uri)
+    assetData.append('assetImg', selectedFile)
     
-    // axios({method: 'POST', 
-    //         url:`${API}/asset`,
-    //         data: assetData,
-    //         headers: { "Content-Type": "multipart/form-data" }
-    // }).then((res) => {
-    //   // toast.notify("successfully added", "success")
-    //   alert("success")
-    // }).catch((err) => {
-    //   // toast.notify(err.message, "error")
-    //   alert(err.message)
-    // })
+    axios({method: 'PUT', 
+            url:`${API}/asset/${data.id}`,
+            data: assetData,
+            headers: { "Content-Type": "multipart/form-data" }
+    }).then((res) => {
+      // toast.notify("successfully added", "success")
+      alert("success")
+    }).catch((err) => {
+      // toast.notify(err.message, "error")
+      alert(err.message)
+    })
 
-    alert("Asset update")
     closeModal()
   }
 
@@ -119,7 +125,7 @@ const InputModal = ({closeModal, selectedRow}) => {
           {/*header*/}
           <header className="flex items-start justify-between p-4 border-b border-solid border-slate-200 rounded-t">
             <h3 className="text-3xl font-semibold">
-              Input Barang Masuk
+              Input Barang Masuk [{data.id}] 
             </h3>
             <button className="text-2xl text-gray-400" onClick={closeModal}>
                 ×
@@ -131,7 +137,7 @@ const InputModal = ({closeModal, selectedRow}) => {
             <div className="flex">
               {/* Input: photo */}
               <div>
-                <PhotoIcon className="w-48 h-48 text-yellow-500" />
+                {data.img_uri ? <Image src={data.img_uri} alt="img" width={200} height={200}/> : <PhotoIcon className="w-48 h-48 text-yellow-500" />}
                 <input type="file" name="file" onChange={changeHandler} />
               </div>
               <div className="flex flex-col w-full">

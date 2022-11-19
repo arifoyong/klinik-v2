@@ -1,17 +1,3 @@
-# FROM node:16-alpine
-
-# WORKDIR /usr/app
-
-# COPY package*.json ./
-
-# RUN npm install
-# # If you are building your code for production
-# # RUN npm ci --only=production
-
-# # Bundle app source
-# COPY . .
-
-
 FROM node:16-alpine as base
 
 WORKDIR /src
@@ -19,9 +5,10 @@ COPY package*.json /
 EXPOSE 3000
 
 FROM base as production
-ENV NODE_ENV=production
-RUN npm ci
+RUN npm i -s
 COPY . /
+RUN npm run build
+CMD npm start
 
 
 FROM base as dev

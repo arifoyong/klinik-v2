@@ -57,7 +57,7 @@ export default function Home() {
       <div className="flex justify-end p-2 mt-2">
         <button className="py-2 px-4 bg-green-600 text-white rounded-xl"
           onClick={() => handleAdd()}>
-          (+)
+          Add
         </button>
       </div>
 

@@ -70,12 +70,13 @@ const InputModal = ({closeModal, selectedRow}) => {
     }).then((res) => {
       // toast.notify("successfully added", "success")
       alert("success")
+      closeModal()
+      
     }).catch((err) => {
       // toast.notify(err.message, "error")
       alert(err.message)
     })
 
-    closeModal()
   }
 
   const updateAsset = async (e) => {

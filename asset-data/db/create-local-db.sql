@@ -1,13 +1,10 @@
 -- Local database definition.
 
 DROP DATABASE IF EXISTS local_db;
-
 CREATE DATABASE local_db;
-
 USE local_db;
 
 DROP TABLE IF EXISTS asset;
-
 CREATE TABLE asset (
   id int(10) NOT NULL AUTO_INCREMENT,
   name varchar(50) NOT NULL,

@@ -5,23 +5,33 @@ services:
     build:
       context: ./db
       dockerfile: Dockerfile-dev
-    # restart: always
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
     ports:
-      - '3306:3306'
+      - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
     volumes:
       - mydb:/var/lib/mysql
 
   backend:
     container_name: klinik_backend
     command: npm run dev
+    restart: unless-stopped
     build:
       context: ./backend
       dockerfile: Dockerfile
       target: dev
+    env_file: ./.env
+    environment:
+      STATIC_IMG_DIR: ${STATIC_IMG_DIR}
+      DB_HOST: mysqldb
+      DB_PORT: ${MYSQLDB_DOCKER_PORT}
+      DB_USER: ${MYSQLDB_USER}
+      DB_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
+      DB_DATABASE: local_db
     ports:
-      - "5000:5000"
+      - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     depends_on:
       - mysqldb
     volumes:
@@ -30,12 +40,19 @@ services:
   
   frontend:
     container_name: klinik_frontend
-    command: npm run dev
     build:
       context: ./app
       dockerfile: Dockerfile
       target: dev
+    command: npm run dev
+    env_file: ./.env
+    environment:
+      BACKEND_API: ${BACKEND_API}
     ports:
-      - "3000:3000"
+      - ${NEXT_LOCAL_PORT}:${NEXT_DOCKER_PORT}
+    volumes:
+      - ./app:/src
+      - /src/node_modules
+
 volumes: 
   mydb:

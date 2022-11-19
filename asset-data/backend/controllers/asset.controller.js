@@ -1,4 +1,5 @@
 const db = require('../services/db')
+const STATIC_IMG_DIR=_DIR = process.env.STATIC_IMG_DIR || 'http://localhost:8000/images'
 
 const getAllAsset = (req, res, next) => {
   db.query("select * from asset", (err, data, fields) => {
@@ -40,7 +41,7 @@ const createAsset = (req, res) => {
   if (req.files !== null) {
     const assetImg  = req.files.assetImg
     const assetImgNewPath = `${__dirname}/../public/images/${assetImg.name}`
-    img_uri = `http://localhost:5000/images/${assetImg.name}`
+    img_uri = `${STATIC_IMG_DIR}/${assetImg.name}`
 
     assetImg.mv(assetImgNewPath, (err) => {
       if (err)  return res.status(500).json({status: "error", error: err.message})
@@ -82,7 +83,7 @@ const createAsset = (req, res) => {
   if (req.files !== null ) {
     const assetImg  = req.files.assetImg
     const assetImgNewPath = `${__dirname}/../public/images/${assetImg.name}`
-    img_uri = `http://localhost:5000/images/${assetImg.name}`
+    img_uri = `${STATIC_IMG_DIR}/${assetImg.name}`
 
     assetImg.mv(assetImgNewPath, (err) => {
       if (err)  return res.status(500).json({status: "error", error: err.message})

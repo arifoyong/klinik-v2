@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { formatYYYY_MM_DD } from '../utils/formatDate'
 import { toast } from './Alert/Alert'
 import {  PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import {API} from '../config'
+import { API } from '../config'
 import axios from 'axios'
 
 

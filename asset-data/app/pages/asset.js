@@ -17,7 +17,8 @@ export default function Home() {
     getData()
   },[])
 
-  const getData = (i) => {
+  const getData = () => {
+    console.log("API: ", API)
     const AXIOS_OPTION = {
       method: 'GET',
       url: `${API}/asset`,

@@ -30,9 +30,9 @@ const NavBar = () => {
               Home
             </div>
           </Link>
-          <Link href='/about'>
+          <Link href='/asset'>
             <div className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-gray-200 hover:text-gray-600'>
-              About
+              Asset
             </div>
           </Link>
         </div>

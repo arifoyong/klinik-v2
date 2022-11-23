@@ -14,19 +14,15 @@ const DB_DATABASE = process.env.DB_DATABASE
 //   database : 'local_db'
 // }
 
-console.log(DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_DATABASE)
 const connOption = {
+  connectionLimit : 10,
   host     : DB_HOST,
   port     : DB_PORT,
   user     : DB_USER,
   password : DB_PASSWORD,
   database : DB_DATABASE
 }
-
-const dbConn = mysql.createConnection(connOption)
-dbConn.connect(err => {
-  if (err) throw err;
-  console.log("Successfully connected to database")
-})
+  
+const dbConn = mysql.createPool(connOption).promise()
 
 module.exports = dbConn

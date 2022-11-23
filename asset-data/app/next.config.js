@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   images: {
-    domains: ['localhost', '185.205.210.169'],
+    domains: ['localhost'],
   },
   publicRuntimeConfig: {
     BACKEND_API: process.env.BACKEND_API,

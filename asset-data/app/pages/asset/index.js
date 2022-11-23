@@ -1,63 +1,44 @@
 import { useEffect, useState } from 'react'
-import useSWR from 'swr'
-
 import axios from 'axios'
 import Link from 'next/link'
-import Image from 'next/image'
 
-import Layout from '../components/Layout/Layout'
-import InputModal from '../components/AssetModal'
-import {  PencilIcon, TrashIcon } from '@heroicons/react/24/solid'
-import { formatDD_MMM_YY, formatNo }  from '../utils/formatDate'
-import { API } from '../config'
+import Layout from '../../components/Layout/Layout'
 
-
-const fetcher = async (url) => {
-  return await axios.get(url).then((resp) => resp.data.data)
-}
+import {  PencilIcon } from '@heroicons/react/24/solid'
+import { formatDD_MMM_YY, formatNo }  from '../../utils/formatDate'
+import { API } from '../../config'
 
 export default function Home() {
-  const [selectedRow, setSelectedRow] = useState({})
-  const [showModal, setShowModal] = useState(false)
+  const [data, setData] = useState([])
 
-  const { data, error } = useSWR(`${API}/asset`, fetcher)
-  if (error) return <div>Failed to load</div>
-  if (!data) return <div>Loading...</div>
-  
-  const closeModal = () => {
-    setShowModal(false)
-  }
-
-  const handleEdit = (selectedData) => {
-    setSelectedRow(selectedData)
-    setShowModal(true)
-  }
-
-  const handleAdd = () => {
-    setSelectedRow()
-    setShowModal(true)
-  }
-
-  const handleDelete = (id) => {
+  useEffect(() => {
     const AXIOS_OPTION = {
-      method: 'DELETE',
-      url: `${API}/asset/${id}`,
+      method: 'GET',
+      url: `${API}/asset`,
     };
+    
+    axios.request(AXIOS_OPTION).then(res => setData(res.data.data))
+  })
 
-    axios.request(AXIOS_OPTION)
-  }
+  // const handleDelete = (id) => {
+  //   const AXIOS_OPTION = {
+  //     method: 'DELETE',
+  //     url: `${API}/asset/${id}`,
+  //   };
+
+  //   // axios.request(AXIOS_OPTION).then(() => mutate(`${API}/asset`))
+  //   axios.request(AXIOS_OPTION)
+  // }
 
   return (
     <Layout>
       <div className="flex justify-end p-2 mt-2">
-        <button className="py-2 px-4 bg-green-600 text-white rounded-xl"
-          onClick={() => handleAdd()}>
-          Add
-        </button>
+        <Link href="/asset/-1">
+          <button className="py-2 px-4 bg-green-600 text-white rounded-xl">
+            Add
+          </button>
+        </Link>
       </div>
-
-      { showModal && <InputModal closeModal={closeModal} selectedRow={selectedRow}/> }
-
 
       <table className="table-auto w-full shadow-xl">
         <thead>
@@ -71,7 +52,7 @@ export default function Home() {
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-300 text-sm">
-        { data.length>0 && data.map( (dt,i) => {
+        { data.length>0 && data.map((dt,i) => {
             return (
               <tr key={dt.id} 
                   className={`${i%2 === 0 ? '' : 'bg-gray-100'} cursor-pointer hover:bg-gray-400 hover:text-gray-100`}>
@@ -80,7 +61,9 @@ export default function Home() {
                 </td>
                 <td className="p-1">
                   <div className="flex">
-                    <div className="p-2">{dt.img_uri && <Image src={dt.img_uri} alt="img" width={100} height={100}/>}</div>
+                    <div className="p-2">
+                      {dt.img_uri && <img src={dt.img_uri} alt="img" width={100} height={100}/>}
+                    </div>
                     <div className="flex flex-col p-2">
                       <div className="font-bold text-lg">{dt.name}</div>
                       <div className="">Spec: {dt.spec}</div>
@@ -102,10 +85,10 @@ export default function Home() {
                   <div>Contact: {dt.contact} (HP: {dt.phone})</div>
                 </td>
                 <td className="p-1 flex gap-2">
-                  <PencilIcon className="w-6 h-6 text-yellow-500" onClick={() => handleEdit(dt)}/>
-                  <TrashIcon className="w-6 h-6 text-red-600"  onClick={() => handleDelete(dt.id)}/> 
+                  <Link href={`/asset/${dt.id}`}>
+                    <PencilIcon className="w-6 h-6 text-yellow-500"/>
+                  </Link>
                 </td>
-           
               </tr>
             )
           })}

@@ -1,9 +1,12 @@
-import {useState, useEffect} from 'react'
-import moment from 'moment' 
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 import axios from 'axios'
+import { PhotoIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/solid'
+import { API } from '../../config'
+import moment from 'moment'
 
-import {  PhotoIcon, XMarkIcon } from '@heroicons/react/24/solid'
-import { API } from '../config'
+import Layout from '../../components/Layout/Layout'
 
 const defaultData = {
   id: -1,
@@ -22,16 +25,27 @@ const defaultData = {
   img_uri:""
 }
 
-const InputModal = ({closeModal, selectedRow}) => {
+export default function AssetById() {
+  const router = useRouter()
+
+  const { id } = router.query  
   const [selectedImage, setselectedImage] = useState();
   const [data, setData] = useState(defaultData)
 
   useEffect(() => {
-    if (selectedRow) {
-      selectedRow.delivery_date = moment(selectedRow.delivery_date).format('yyyy-MM-DD')
-      setData(selectedRow)
-    } 
+    (id > -1) && refreshData(id)
   },[])
+
+  const refreshData = async (id) => {
+    const AXIOS_OPTION = {
+      method: 'GET',
+      url: `${API}/asset/${id}`,
+    };
+    
+    let result = await axios.request(AXIOS_OPTION).then((res) => res.data.data[0])
+    result.delivery_date = moment(result.delivery_date).format('yyyy-MM-DD')
+    setData(result)
+  }
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -67,8 +81,8 @@ const InputModal = ({closeModal, selectedRow}) => {
             data: assetData,
             headers: { "Content-Type": "multipart/form-data" }
     }).then((res) => {
-      alert("success")
-      closeModal()
+      alert("success saving data")
+      router.push('/asset')
     }).catch((err) => {
       alert(err.message)
     })
@@ -99,26 +113,39 @@ const InputModal = ({closeModal, selectedRow}) => {
             data: assetData,
             headers: { "Content-Type": "multipart/form-data" }
     }).then((res) => {
-      alert("success")
-      closeModal()
+      alert("success updating data")
+      router.push('/asset')
     }).catch((err) => {
       alert(err.message)
     })    
   }
 
-  return (
-  <>
-    <div className="justify-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-      <div className="relative w-2/3 my-6 mx-auto text-md">
+   const handleDelete = async (e) => {
+    e.preventDefault()
+    const AXIOS_OPTION = {
+      method: 'DELETE',
+      url: `${API}/asset/${data.id}`,
+    };
 
+    axios.request(AXIOS_OPTION).then(() => {
+      alert("delete success")
+      router.push('/asset')
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }
+
+
+  return (
+    <Layout>
         <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
           {/*header*/}
           <header className="flex items-start justify-between p-4 border-b border-solid border-slate-200 rounded-t">
             <h3 className="text-3xl font-semibold">
-              Input Barang Masuk [{data.id}] 
+              Input Barang Masuk [{id}] 
             </h3>
-            <button className="text-2xl text-gray-400" onClick={closeModal}>
-              <XMarkIcon className="w-6 h-6" />
+            <button  onClick={() => router.back()}>
+              <ArrowUturnLeftIcon className="w-6 h-6"/>
             </button>
           </header>
 
@@ -317,10 +344,19 @@ const InputModal = ({closeModal, selectedRow}) => {
             </div>
           {/*footer*/}
             <footer className="flex items-center justify-end p-4 border-t border-solid">
-              <button className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                type="button" onClick={closeModal} >
-                Close
+
+              <button className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none"
+                type="submit"
+                onClick={handleDelete}
+              >
+                Delete
               </button>
+              <Link href='/asset'>
+                <button className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150">  
+                  Close
+                </button>
+              </Link>
+              
               <button className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="submit" >
                 Save Changes
@@ -329,11 +365,7 @@ const InputModal = ({closeModal, selectedRow}) => {
           </form>
           
         </div>
-      </div>
-    </div>
-    <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-  </>
+
+    </Layout>
   )
 }
-
-export default InputModal

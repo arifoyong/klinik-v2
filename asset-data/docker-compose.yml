@@ -1,16 +1,24 @@
 version: "3.3"
 
 services:
+  # mysqldb:
+  #   build:
+  #     context: ./db
+  #     dockerfile: Dockerfile-dev
+  #   restart: unless-stopped
+  #   env_file: ./.env
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
+  #   ports:
+  #     - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
+  #   volumes:
+  #     - mydb:/var/lib/mysql
   mysqldb:
-    build:
-      context: ./db
-      dockerfile: Dockerfile-dev
+    image: mysql:8.0
     restart: unless-stopped
     env_file: ./.env
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
     ports:
-      - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
+       - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
     volumes:
       - mydb:/var/lib/mysql
 

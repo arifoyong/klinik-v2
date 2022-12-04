@@ -1,9 +1,23 @@
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Router from 'next/router'
 import { Bars3BottomLeftIcon, HomeModernIcon, XCircleIcon} from '@heroicons/react/24/outline'
+
+import { isAuth, signOut } from '../../utils/auth'
 
 const NavBar = () => {
   const [active, setActive] = useState(false)
+  const [authData, setAuthData] = useState(null)
+
+  useEffect(() => {
+    setAuthData(isAuth())
+  }, [])
+
+  const handleSignout = () => {
+    signOut(() => {
+      Router.push("/auth/signin");
+    });
+  };
 
   return (
     <nav className="bg-gray-600 flex items-center justify-between flex-wrap p-3">
@@ -35,6 +49,28 @@ const NavBar = () => {
               Asset
             </div>
           </Link>
+          
+          {authData && (
+                <div className='lg:inline-flex lg:w-auto w-full px-3 py-2 cursor-pointer rounded text-white font-bold items-center justify-center hover:bg-gray-200 hover:text-gray-600'
+                  onClick={() => handleSignout()}>
+                  SignOut
+                </div>
+            )}
+
+          { authData ? (
+            <div className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-gray-200 hover:text-gray-600'>
+              {authData.username}
+          </div>
+          ) : (
+            <Link href='/auth/signin'>
+              <div className='lg:inline-flex lg:w-auto w-full px-3 py-2 rounded text-white font-bold items-center justify-center hover:bg-gray-200 hover:text-gray-600'>
+                SignIn
+              </div>
+            </Link>
+          )}
+          
+          
+
         </div>
       </div>
     </nav>

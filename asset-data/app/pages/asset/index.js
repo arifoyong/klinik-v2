@@ -3,12 +3,16 @@ import axios from 'axios'
 import Link from 'next/link'
 
 import Layout from '../../components/Layout/Layout'
+import IsUser from '../../components/auth/IsUser'
+import { useAppContext } from '../../context/state'
 
 import {  PencilIcon } from '@heroicons/react/24/solid'
 import { formatDD_MMM_YY, formatNo }  from '../../utils/formatDate'
-import { API } from '../../config'
+
+const API = process.env.BACKEND_API
 
 export default function Home() {
+  const {currentUser, setCurrentUser} = useAppContext()
   const [data, setData] = useState([])
 
   useEffect(() => {
@@ -16,28 +20,23 @@ export default function Home() {
       method: 'GET',
       url: `${API}/asset`,
     };
+
     
     axios.request(AXIOS_OPTION).then(res => setData(res.data.data))
-  })
+  },[])
 
-  // const handleDelete = (id) => {
-  //   const AXIOS_OPTION = {
-  //     method: 'DELETE',
-  //     url: `${API}/asset/${id}`,
-  //   };
-
-  //   // axios.request(AXIOS_OPTION).then(() => mutate(`${API}/asset`))
-  //   axios.request(AXIOS_OPTION)
-  // }
 
   return (
+    <IsUser>
     <Layout>
       <div className="flex justify-end p-2 mt-2">
-        <Link href="/asset/-1">
-          <button className="py-2 px-4 bg-green-600 text-white rounded-xl">
-            Add
-          </button>
-        </Link>
+        { currentUser.role === 'admin' && 
+            <Link href="/asset/-1">
+              <button className="py-2 px-4 bg-green-600 text-white rounded-xl">
+                Add
+              </button>
+            </Link>
+        }
       </div>
 
       <table className="table-auto w-full shadow-xl">
@@ -95,5 +94,6 @@ export default function Home() {
         </tbody>
       </table>
     </Layout>
+    </IsUser>
   )
 }

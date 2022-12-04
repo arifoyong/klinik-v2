@@ -1,18 +1,6 @@
 version: "3.3"
 
 services:
-  # mysqldb:
-  #   build:
-  #     context: ./db
-  #     dockerfile: Dockerfile-dev
-  #   restart: unless-stopped
-  #   env_file: ./.env
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
-  #   ports:
-  #     - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
-  #   volumes:
-  #     - mydb:/var/lib/mysql
   mysqldb:
     image: mysql:8.0
     restart: unless-stopped
@@ -38,6 +26,7 @@ services:
       DB_USER: ${MYSQLDB_USER}
       DB_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
       DB_DATABASE: local_db
+      TOKEN_SECRET: ${TOKEN_SECRET}
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     depends_on:
@@ -55,7 +44,8 @@ services:
     command: npm run dev
     env_file: ./.env
     environment:
-      BACKEND_API: ${BACKEND_API}
+      BACKEND_API: ${NEXT_BACKEND_API}
+      TOKEN_SECRET: ${TOKEN_SECRET}
     ports:
       - ${NEXT_LOCAL_PORT}:${NEXT_DOCKER_PORT}
     volumes:

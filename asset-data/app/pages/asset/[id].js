@@ -3,10 +3,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { PhotoIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/solid'
-import { API } from '../../config'
 import moment from 'moment'
 
 import Layout from '../../components/Layout/Layout'
+import IsUser from '../../components/auth/IsUser'
+import { useAppContext } from '../../context/state'
+
+const API = process.env.BACKEND_API || "http://domain:8080/api"
 
 const defaultData = {
   id: -1,
@@ -27,6 +30,7 @@ const defaultData = {
 
 export default function AssetById() {
   const router = useRouter()
+  const {currentUser, setCurrentUser} = useAppContext()
 
   const { id } = router.query  
   const [selectedImage, setselectedImage] = useState();
@@ -137,6 +141,7 @@ export default function AssetById() {
 
 
   return (
+    <IsUser>
     <Layout>
         <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
           {/*header*/}
@@ -343,8 +348,8 @@ export default function AssetById() {
               </div>
             </div>
           {/*footer*/}
+            { currentUser.role === 'admin' && 
             <footer className="flex items-center justify-end p-4 border-t border-solid">
-
               <button className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none"
                 type="submit"
                 onClick={handleDelete}
@@ -362,10 +367,12 @@ export default function AssetById() {
                 Save Changes
               </button>
             </footer>
+            }
           </form>
           
         </div>
 
     </Layout>
+    </IsUser>
   )
 }

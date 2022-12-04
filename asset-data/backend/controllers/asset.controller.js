@@ -2,14 +2,6 @@ const db = require('../services/db')
 
 const STATIC_IMG_DIR=_DIR = process.env.STATIC_IMG_DIR || 'http://localhost:8000/images'
 
-const moveImg = async (assetImg) => {
-  const assetImgNewPath = `${__dirname}/../public/images/${assetImg.name}`
-  const res = await assetImg.mv(assetImgNewPath).catch(err => err)
-
-  return {img_uri: `${STATIC_IMG_DIR}/${assetImg.name}`, error: res} 
-}
-
-
 const getAllAsset = async (req, res) => {
   const [rows] = await db.query("select * from asset")
   return res.status(200).json({status: "success", data: rows});
@@ -45,7 +37,6 @@ const createAsset = async (req, res) => {
  const updateAsset = async (req, res) => {
   if (!req.body)  return res.status(400).json({status: "error", error: "no request body found"})
 
-  console.log("dobyd", req.body)
   let { id,name,brand,spec,quantity,price,delivery_cost,delivery_date,vendor,website,address,contact,phone,img_uri } = req.body
   
   console.log('Req.file', req.file)

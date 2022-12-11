@@ -1,9 +1,9 @@
 const express = require('express')
-const {signUp, signIn, authenticateToken, signOut} = require('../controllers/auth.controller')
+const {signUp, signIn, signOut} = require('../controllers/auth.controller')
 
 const router = express.Router()
 
-router.get('/', authenticateToken)
+// router.get('/', authenticateToken)
 router.post('/signup', signUp)
 router.post('/signin', signIn)
 router.get('/signout', signOut)

@@ -7,7 +7,7 @@ import moment from 'moment'
 
 import Layout from '../../components/Layout/Layout'
 import IsUser from '../../components/auth/IsUser'
-import { useAppContext } from '../../context/state'
+import { isAuth } from '../../utils/auth'
 
 const API = process.env.BACKEND_API || "http://domain:8080/api"
 
@@ -30,7 +30,7 @@ const defaultData = {
 
 export default function AssetById() {
   const router = useRouter()
-  const {currentUser, setCurrentUser} = useAppContext()
+  const [currentUser, setCurrentUser] = useState(isAuth())
 
   const { id } = router.query  
   const [selectedImage, setselectedImage] = useState();
@@ -46,7 +46,7 @@ export default function AssetById() {
       url: `${API}/asset/${id}`,
     };
     
-    let result = await axios.request(AXIOS_OPTION).then((res) => res.data.data[0])
+    let result = await axios.request(AXIOS_OPTION).then((res) => res.data[0])
     result.delivery_date = moment(result.delivery_date).format('yyyy-MM-DD')
     setData(result)
   }
@@ -88,7 +88,7 @@ export default function AssetById() {
       alert("success saving data")
       router.push('/asset')
     }).catch((err) => {
-      alert(err.message)
+      alert(err.response.data.message || err.message)
     })
   }
 
@@ -120,7 +120,7 @@ export default function AssetById() {
       alert("success updating data")
       router.push('/asset')
     }).catch((err) => {
-      alert(err.message)
+      alert(err.response.data.message || err.message)
     })    
   }
 
@@ -147,7 +147,7 @@ export default function AssetById() {
           {/*header*/}
           <header className="flex items-start justify-between p-4 border-b border-solid border-slate-200 rounded-t">
             <h3 className="text-3xl font-semibold">
-              Input Barang Masuk [{id}] 
+              Input Barang Masuk [{id}] { currentUser.username}
             </h3>
             <button  onClick={() => router.back()}>
               <ArrowUturnLeftIcon className="w-6 h-6"/>

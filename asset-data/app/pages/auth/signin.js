@@ -1,18 +1,24 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Router from 'next/router'
 import axios from 'axios'
 
 import Layout from '../../components/Layout/Layout'
-
-import { useAppContext } from '../../context/state'
 import { isClientSide } from '../../utils/detectClient'
 import { setCookie, setLocalStorage } from '../../utils/auth'
+import { isAuth } from '../../utils/auth'
 
 const API = process.env.BACKEND_API || "http://domain:8080/api"
 
 export default function SignIn() {
-  const {currentUser, setCurrentUser} = useAppContext()
+  const [currentUser, setCurrentUser] = useState(isAuth())
   const [data, setData] = useState({email:'', password:''})
+
+  useEffect(() => {
+    console.log('cur user', currentUser)
+    if (currentUser) {
+      Router.push('/')
+    }
+  },[])
 
   const handleChange = (e) => {
     setData({...data, [e.target.name]: e.target.value})
@@ -27,13 +33,14 @@ export default function SignIn() {
             headers: { "Content-Type": "application/json"}
     }).then((res) => {
       if (isClientSide) {
+        // setCookie('token', res.data.token)
         setCookie('jwt_token', res.data.token)
         setLocalStorage('user', res.data.user)
 
-        setCurrentUser(res.data.user)
+        // setCurrentUser({user: res.data.user, loggedIn: true})
       }
 
-      Router.push('/asset')
+      Router.push('/')
     }).catch((err) => {
       alert(err.reponse ? err.response.data.error : err.message)
     })

@@ -3,7 +3,6 @@ import axios from 'axios'
 import { isClientSide } from './detectClient'
 import cookie from 'js-cookie'
 
-// import { API } from '../myconf'
 const API = process.env.BACKEND_API || "http://domain:8080/api"
 
 
@@ -56,6 +55,19 @@ export const isAuth = () => {
       } else {
         return false
       }
+    }
+  }
+
+  return false
+}
+
+export const isAuthWithoutCookie = () => {
+  if (isClientSide) {
+    if (localStorage.getItem("user")) {
+
+      return JSON.parse(localStorage.getItem("user"))
+    } else {
+      return false
     }
   }
 

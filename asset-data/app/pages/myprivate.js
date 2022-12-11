@@ -7,8 +7,6 @@ const MyPrivate = () => {
       <div>
         This is protected route
       </div>
-
-
     </Layout>
   )
 }

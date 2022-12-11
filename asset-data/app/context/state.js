@@ -38,8 +38,10 @@ const AppContext = createContext()
 
 export function AppWrapper({ children }) {
   const [currentUser, setCurrentUser] = useState({
-    username: "",
-    role: ""
+    user: {userName: "",
+            role: "",
+          },
+    loggedIn: false,
   })
 
   let stateValue = {

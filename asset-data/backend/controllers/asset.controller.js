@@ -1,72 +1,79 @@
 const db = require('../services/db')
+const Asset = require('../models/asset')()
 
 const STATIC_IMG_DIR=_DIR = process.env.STATIC_IMG_DIR || 'http://localhost:8000/images'
 
-const getAllAsset = async (req, res) => {
-  const [rows] = await db.query("select * from asset")
-  return res.status(200).json({status: "success", data: rows});
+const getAllAsset = async (req, res, next) => {
+  try {
+    const assets = await Asset.findAll()
+    return  res.status(200).json(assets);
+  } catch (err) {
+    next(err)
+  }
 }
 
-const findAssetById = async (req, res) => {
-  let query =`Select * from asset where id = ?`
+const countAsset = async (req, res, next) => {
+  try {
+    const assetCount = await Asset.countAsset()
+    return  res.status(200).json(assetCount);
+  } catch (err) {
+    next(err)
+  }
+}
 
-  const [rows, _] = await db.query(query, [req.params.id])
-  if (rows.length == 0) return res.status(400).json({status: "error", error: "record not found"})
-
-  return res.status(200).json({ status: "success", data: rows });
+const findAssetById = async (req, res, next) => {
+  try {
+    const asset = await Asset.findOne("id", req.params.id)
+    return  res.status(200).json(asset);
+  } catch (err) {
+    
+    next(err)
+  }
  }
 
-const createAsset = async (req, res) => {
-  if (!req.body)  return res.status(400).json({status: "error", error: "no request body found"})
-
-  let { id,name,brand,spec,quantity,price,delivery_cost,delivery_date,vendor,website,address,contact,phone,img_uri } = req.body
-  if (typeof req.file !== 'undefined' && req.file) {
-    img_uri = `${STATIC_IMG_DIR}/${req.file.filename}`
-  }
-
-  let query = `insert into asset (name, brand, spec, quantity, price, delivery_cost, delivery_date, vendor, website, address, contact, phone, img_uri) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  const [result] = await db.query(query, [name, brand, spec, quantity, price, delivery_cost, delivery_date, vendor, website, address, contact, phone, img_uri])
-                            .catch(err => [{status: "error", error: err.message}])
-
-  if (result.error) return res.status(400).json({status: "error", error: result.error})
+const createAsset = async (req, res, next) => {
+  try {
+    let body = req.body
+    if (typeof req.file !== 'undefined' && req.file) {
+      body.img_uri = `${STATIC_IMG_DIR}/${req.file.filename}`
+    }
   
-  return res.status(200).json({status: "success", data: `data with ID: ${result.insertId} was created`})
+    const result = await Asset.createAsset(body)
+    return res.status(200).json(result) 
+  } catch (err) {
+    next(err)
+  }
  }
 
 
  const updateAsset = async (req, res) => {
-  if (!req.body)  return res.status(400).json({status: "error", error: "no request body found"})
-
-  let { id,name,brand,spec,quantity,price,delivery_cost,delivery_date,vendor,website,address,contact,phone,img_uri } = req.body
-  
-  console.log('Req.file', req.file)
-  if (typeof req.file !== 'undefined' && req.file) {
-    img_uri = `${STATIC_IMG_DIR}/${req.file.filename}`
-  }
-
-  const query = `UPDATE asset SET name=?, brand=?, spec=?, quantity=?, price=?, delivery_cost=?, delivery_date=?, vendor=?, website=?, address=?, contact=?, phone=?, img_uri=? WHERE id=?`
-  const [result] = await db.query(query, [name, brand, spec, quantity, price, delivery_cost, delivery_date, vendor, website, address, contact, phone, img_uri, id])
-                            .catch(err => [{status: "error", error: err.message}])
-
-  
-  if (result.error) {
-    console.log(result.error)
-    return res.status(400).json({status: "error", error: result.error})
-  }
-  return res.status(200).json({status: "success", data: `data with ID: ${id} was updated`})
+   try {
+     let body = req.body
+     body.id = req.params.id
+     if (typeof req.file !== 'undefined' && req.file) {
+       body.img_uri = `${STATIC_IMG_DIR}/${req.file.filename}`
+     }
+     
+   
+     const result = await Asset.updateAsset(body)
+     return res.status(200).json(result) 
+   } catch (err) {
+     next(err)
+   }
 }
 
 const deleteAsset = async (req, res) => {
-  let query = `DELETE FROM asset WHERE id=?`
-
-  const [ result ] = await db.query(query, [req.params.id])
-  if (result.affectedRows == 0)  return res.status(400).json({status: "error", error: "record not found"})
-
-  return res.status(200).json({status: "success", data: `data with ID ${req.params.id} was deleted`})
+  try {
+    const result = await Asset.deleteAsset({id: req.params.id})
+    return res.status(200).json(result) 
+  } catch (err) {
+    next(err)
+  }
 }
 
  module.exports = {
   findAssetById,
+  countAsset,
   getAllAsset,
   createAsset,
   updateAsset,

@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import Layout from '../../components/Layout/Layout'
 import IsUser from '../../components/auth/IsUser'
-import { useAppContext } from '../../context/state'
+import { isAuth } from '../../utils/auth'
 
 import {  PencilIcon } from '@heroicons/react/24/solid'
 import { formatDD_MMM_YY, formatNo }  from '../../utils/formatDate'
@@ -12,17 +12,19 @@ import { formatDD_MMM_YY, formatNo }  from '../../utils/formatDate'
 const API = process.env.BACKEND_API
 
 export default function Home() {
-  const {currentUser, setCurrentUser} = useAppContext()
+  const [currentUser, setCurrentUser] = useState(isAuth())
   const [data, setData] = useState([])
 
   useEffect(() => {
     const AXIOS_OPTION = {
       method: 'GET',
       url: `${API}/asset`,
+      withCredentials: true
     };
-
-    
-    axios.request(AXIOS_OPTION).then(res => setData(res.data.data))
+    axios.request(AXIOS_OPTION).then(res => {
+      setData(res.data)
+    }).catch(err => {
+    })
   },[])
 
 

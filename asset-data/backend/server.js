@@ -9,7 +9,7 @@ const { errorResponder, invalidPathHandler } = require('./middleware/errorHandli
 
 const PORT = process.env.NODE_LOCAL_PORT || 5000
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://185.205.210.169:3000'],
   credentials: true
 }
 

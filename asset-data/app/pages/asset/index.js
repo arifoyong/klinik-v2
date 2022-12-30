@@ -121,7 +121,7 @@ export default function Home({data, count, currentPage}) {
 
 export async function getServerSideProps(context) {
   const page = context.query.page || 1
-  const res = await fetch(`http://backend:5000/api/asset?page=${page}&limit=${PER_PAGE}`)
+  const res = await fetch(`${API}/asset?page=${page}&limit=${PER_PAGE}`)
   const data = await res.json()
 
   return { props: { data: data.assets, count:data.count, currentPage: parseInt(page) } }

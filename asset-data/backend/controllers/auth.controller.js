@@ -3,7 +3,7 @@ const User = require('../models/users')()
 
 const TOKEN_SECRET = process.env.TOKEN_SECRET || 'secrettoken'
 
-function generateAccessToken(data, expiresIn='600s') {
+function generateAccessToken(data, expiresIn='6000s') {
   return jwt.sign(data, TOKEN_SECRET, { expiresIn: expiresIn});
 }
 
@@ -21,9 +21,8 @@ const signIn = async (req,res,next) => {
   try {
     const user = await User.verifyUser(req.body)
     const token = generateAccessToken(user)
-
-    console.log("set cookie")
-    res.cookie('jwt_token', token, {httpOnly:true, maxAge: 10 * 60 * 1000, path:"/"})
+    
+    res.cookie('jwt_token', token, {httpOnly:true, maxAge: 100 * 60 * 1000, path:"/"})
     return res.status(200).json({token, user})
   } catch (err) {
     next(err)

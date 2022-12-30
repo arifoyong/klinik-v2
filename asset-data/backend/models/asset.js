@@ -4,18 +4,40 @@ const { createError, BAD_REQUEST } = require('../services/createError')
 const Asset = () => {
   const tableName = "asset"
 
-  const findAll = async (offset=0) => {
-    const query = `SELECT * from ${tableName} LIMIT 3 OFFSET ${offset}`
+  const migrate = async () => {
+    const query = `CREATE TABLE asset (id INT NOT NULL AUTO_INCREMENT,
+                    name VARCHAR(50) NOT NULL, 
+                    brand VARCHAR(50) NOT NULL,
+                    spec VARCHAR(50) NOT NULL,
+                    quantity INT NOT NULL,
+                    price FLOAT NOT NULL,
+                    delivery_cost FLOAT,
+                    delivery_date DATE,
+                    vendor VARCHAR(50),
+                    website VARCHAR(50),
+                    address VARCHAR(200),
+                    contact VARCHAR(50),
+                    phone VARCHAR(20),
+                    img_uri VARCHAR(500),
+                    PRIMARY KEY (id)
+                    )`
+    const result = await executeQuery(query)
+    return result
+  }
+
+  const findAll = async (limit=3, page=1) => {
+    const offset = page > 0 ? limit*(page-1) : 0
+    const query = `SELECT * from ${tableName} LIMIT ${limit} OFFSET ${offset}`
     const result = await executeQuery(query)
   
     return result
   }
 
   const countAsset = async () => {
-    const query = `SELECT COUNT (*) AS COUNT from ${tableName}`
+    const query = `SELECT COUNT (*) as count from ${tableName}`
     const result = await executeQuery(query)
 
-    return result
+    return result[0].count
   }
 
   const findOne = async (field, value) => {

@@ -32,10 +32,10 @@ const isAuthorized = (req, res, next) => {
 
   jwt.verify(token, TOKEN_SECRET , (err, user) => {
     if (err) {
+      console.log("error in jwt verification")
       throw createError({statusCode:500, message:err.message})
     }
 
-    console.log("successful")
     return next()
   })
 }

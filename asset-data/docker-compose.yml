@@ -34,23 +34,23 @@ services:
     volumes:
       - ./backend:/src
       - /src/node_modules
-  
+
   frontend:
     container_name: klinik_frontend
     build:
       context: ./app
       dockerfile: Dockerfile
-      target: dev
-    command: npm run dev
-    env_file: ./.env
-    environment:
-      BACKEND_API: ${NEXT_BACKEND_API}
-      TOKEN_SECRET: ${TOKEN_SECRET}
+      target: production
+      args:
+        TOKEN_SECRET: ${TOKEN_SECRET}
+        BACKEND_API: ${NEXT_BACKEND_API}
+    command: npm run start
+    env_file: ./.env 
     ports:
       - ${NEXT_LOCAL_PORT}:${NEXT_DOCKER_PORT}
     volumes:
-      - ./app:/src
-      - /src/node_modules
-
+      - ./app/public:/src/public
+      # - ./app:/src
+      # - /src/node_modules
 volumes: 
   mydb:

@@ -38,6 +38,8 @@ export default function AssetById() {
 
   useEffect(() => {
     (id > -1) && refreshData(id)
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   const refreshData = async (id) => {
@@ -120,7 +122,8 @@ export default function AssetById() {
       alert("success updating data")
       router.push('/asset')
     }).catch((err) => {
-      alert(err.response.data.message || err.message)
+      console.log(err.response)
+      alert(err.response.message || err.message)
     })    
   }
 

@@ -6,6 +6,16 @@ const { createError, BAD_REQUEST } = require('../services/createError')
 const User = () => {
   const tableName = "user"
 
+  const migrate = async () => {
+    const query = `CREATE TABLE IF NOT EXISTS user (
+                                      email varchar(50) NOT NULL,
+                                      password varchar(50) NOT NULL,
+                                      PRIMARY KEY (email)
+                                    )`
+    const result = await executeQuery(query)
+    return result
+  }
+
   const findAll = async () => {
     const query = `SELECT * from ${tableName}`
     const result = await executeQuery(query)
@@ -64,7 +74,8 @@ const User = () => {
     countUser,
     createUser,
     verifyUser,
-    findOne
+    findOne,
+    migrate
   }
 }
 

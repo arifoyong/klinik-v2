@@ -17,6 +17,10 @@ const INITIAL_DATA = {
 }
 
 export default function SignUp() {
+  const isEmail = (email) => {
+    return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+  }
+
   const router = useRouter()
   const [data, setData] = useState(INITIAL_DATA)
 
@@ -27,9 +31,14 @@ export default function SignUp() {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    console.log(data)
     if (data.password !== data.confirm_pw) {
       alert("Password & confirm password are not the same")
+      return
+    }
+
+    if (!isEmail(data.email)) {
+      alert("Please enter valid email")
+      return
     }
     
     

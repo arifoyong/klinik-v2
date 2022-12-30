@@ -6,12 +6,12 @@ import cookie from 'js-cookie'
 const API = process.env.BACKEND_API || "http://domain:8080/api"
 
 
-export const signOut =  (next) => {
+export const signOut =  async (next) => {
     removeCookie("jwt_token")
     removeLocalStorage("user")
     next()
 
-    return  axios.get(`${API}/auth/signout`).then((res) => console.log(res)).catch((err) => console.log(err))
+    return axios.get(`${API}/auth/signout`).then((res) => console.log(res)).catch((err) => console.log(err))
 }
 
 export const setCookie = (key, values) => {
@@ -45,26 +45,30 @@ export const removeLocalStorage = (key) => {
 };
 
 
+// export const isAuth = () => {
+//   if (isClientSide) {
+//     const cookieChecked = getCookie("jwt_token")
+//     console.log("check cookie", cookieChecked)
+//     if (cookieChecked) {
+//       if (localStorage.getItem("user")) {
+
+//         return JSON.parse(localStorage.getItem("user"))
+//       } else {
+//         return false
+//       }
+//     }
+//   }
+
+//   return false
+// }
+
 export const isAuth = () => {
   if (isClientSide) {
-    const cookieChecked = getCookie("jwt_token")
-    if (cookieChecked) {
-      if (localStorage.getItem("user")) {
-
-        return JSON.parse(localStorage.getItem("user"))
-      } else {
-        return false
-      }
+    if (typeof localStorage === "undefined" || localStorage === null) {
+      console.log("return false in isAuth")
+      return false
     }
-  }
-
-  return false
-}
-
-export const isAuthWithoutCookie = () => {
-  if (isClientSide) {
     if (localStorage.getItem("user")) {
-
       return JSON.parse(localStorage.getItem("user"))
     } else {
       return false

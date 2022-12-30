@@ -7,18 +7,17 @@ import { isClientSide } from '../../utils/detectClient'
 import { setCookie, setLocalStorage } from '../../utils/auth'
 import { isAuth } from '../../utils/auth'
 
-const API = process.env.BACKEND_API || "http://domain:8080/api"
+const API = process.env.BACKEND_API
 
 export default function SignIn() {
   const [currentUser, setCurrentUser] = useState(isAuth())
   const [data, setData] = useState({email:'', password:''})
 
   useEffect(() => {
-    console.log('cur user', currentUser)
     if (currentUser) {
       Router.push('/')
     }
-  },[])
+  },[currentUser])
 
   const handleChange = (e) => {
     setData({...data, [e.target.name]: e.target.value})
@@ -26,18 +25,15 @@ export default function SignIn() {
 
   const handleSignin = (e) => {
     e.preventDefault()
-
+    console.log("API:", API)
     axios({method: 'POST', 
             url:`${API}/auth/signin`,
             data: data,
+            withCredentials: true,
             headers: { "Content-Type": "application/json"}
     }).then((res) => {
       if (isClientSide) {
-        // setCookie('token', res.data.token)
-        setCookie('jwt_token', res.data.token)
         setLocalStorage('user', res.data.user)
-
-        // setCurrentUser({user: res.data.user, loggedIn: true})
       }
 
       Router.push('/')
@@ -56,7 +52,7 @@ export default function SignIn() {
           </h3>
 
         </header>
-        <form className="relative p-6 flex-auto">
+        <form className="relative p-6 flex-auto" onSubmit={handleSignin}>
           <div className="flex flex-col">
               {/* Input: Email */}
               <div className="md:flex md:items-center mb-2">

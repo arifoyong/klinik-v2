@@ -9,7 +9,7 @@ import {  PencilIcon } from '@heroicons/react/24/solid'
 import { formatDD_MMM_YY, formatNo }  from '../../utils/formatDate'
 
 const API = process.env.BACKEND_API
-const PER_PAGE = 5
+const PER_PAGE = 20
 
 export default function Home({data, count, currentPage}) {
   const [currentUser, setCurrentUser] = useState({})

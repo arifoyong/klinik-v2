@@ -37,8 +37,8 @@ services:
       FRONTEND: ${NEXT_FRONTEND}
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
-    depends_on:
-      - mysqldb
+    # depends_on:
+    #   - mysqldb
     volumes:
       - ./backend:/src
       - /src/node_modules

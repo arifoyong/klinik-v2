@@ -5,7 +5,7 @@ USE klinik;
 
 DROP TABLE IF EXISTS assets;
 
-CREATE TABLE IF NOT EXISTS asset ( id int(10) NOT NULL,
+CREATE TABLE IF NOT EXISTS asset ( id int(10) NOT NULL AUTO_INCREMENT,
 									name varchar(50) NOT NULL,
 									brand varchar(50) NOT NULL,
 									spec varchar(50) NOT NULL,

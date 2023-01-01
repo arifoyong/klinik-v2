@@ -8,8 +8,9 @@ const authRouter = require('./routes/auth.router')
 const { errorResponder, invalidPathHandler } = require('./middleware/errorHandling')
 
 const PORT = process.env.NODE_LOCAL_PORT || 5000
+const FRONTEND = process.env.FRONTEND || 'http://localhost:3001'
 const corsOptions = {
-  origin: ['http://localhost:3000', 'http://185.205.210.169:3000'],
+  origin: [FRONTEND],
   credentials: true
 }
 

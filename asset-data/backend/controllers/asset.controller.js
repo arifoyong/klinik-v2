@@ -3,6 +3,7 @@ const Asset = require('../models/asset')()
 const STATIC_IMG_DIR = process.env.STATIC_IMG_DIR || 'http://localhost:8000/images'
 
 const getAllAsset = async (req, res, next) => {
+  console.log('here')
   const page = req.query.page
   const limit = req.query.limit
 

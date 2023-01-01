@@ -1,14 +1,21 @@
 version: "3.3"
 
 services:
-  mysqldb:
-    image: mysql:8.0
+  db:
+    container_name: klinik_mysql
+    build:
+      context: ./DB
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file: ./.env
+    environment:
+      # MYSQL_USER: ''
+      # MYSQL_PASSWORD: ''
+      MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
     ports:
-       - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
+      - '3336:3306'
     volumes:
-      - mydb:/var/lib/mysql
+      - KLINIK_VOL:/var/lib/mysql
 
   backend:
     container_name: klinik_backend
@@ -21,12 +28,13 @@ services:
     env_file: ./.env
     environment:
       STATIC_IMG_DIR: ${STATIC_IMG_DIR}
-      DB_HOST: mysqldb
+      DB_HOST: ${MYSQLDB_HOST}
       DB_PORT: ${MYSQLDB_DOCKER_PORT}
       DB_USER: ${MYSQLDB_USER}
       DB_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
-      DB_DATABASE: local_db
+      DB_DATABASE: ${MYSQLDB_DB}
       TOKEN_SECRET: ${TOKEN_SECRET}
+      FRONTEND: ${NEXT_FRONTEND}
     ports:
       - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     depends_on:
@@ -40,17 +48,22 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-      target: production
+      target: dev
       args:
         TOKEN_SECRET: ${TOKEN_SECRET}
         BACKEND_API: ${NEXT_BACKEND_API}
-    command: npm run start
+    command: npm run dev
     env_file: ./.env 
     ports:
       - ${NEXT_LOCAL_PORT}:${NEXT_DOCKER_PORT}
     volumes:
-      - ./app/public:/src/public
-      # - ./app:/src
-      # - /src/node_modules
-volumes: 
-  mydb:
+      # - ./app/public:/src/public
+      - ./app:/src
+      - /src/node_modules
+volumes:
+   KLINIK_VOL:
+
+networks:
+  default:
+    name: ${NETWORK}
+    external: true

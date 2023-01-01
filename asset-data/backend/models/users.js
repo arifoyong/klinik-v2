@@ -43,6 +43,8 @@ const User = () => {
     const salt = await bcrypt.genSalt(saltRounds)
     const hashedPassword = await bcrypt.hash(password.toString(), salt)
 
+    console.log("Data", email, username, password, role)
+
     const query = `insert into user (email, username, password, role) values(?, ?, ?, ?)`
     const params = [email, username, hashedPassword, role]
     try {
